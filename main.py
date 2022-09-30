@@ -102,18 +102,144 @@ def caesar_cipher():
     new_text = ''
     if language == 'en':
         for i in range(len(text)):
-            ind = en.index(text[i])
-            new_text += new_en[ind]
+            if text[i] in en:
+                new_text += new_en[en.index(text[i])]
+            else:
+                new_text += text[i]
     if language == 'ru':
         for i in range(len(text)):
             if 'ё' in text:
                 while 'ё' in text:
                     text = text.replace('ё', 'е')
-            new_text += new_ru[ru.index(text[i])]
+            if text[i] in ru:
+                new_text += new_ru[ru.index(text[i])]
+            else:
+                new_text += text[i]
     print(new_text.capitalize())
 
+def hangman():
+    word_list = ['год', 'человек', 'время', 'дело', 'жизнь', 'день', 'рука', 'раз', 'работа', 'слово', 'место', 'лицо', 'друг', 'глаз', 'вопрос', 'дом', 'сторона', 'страна', 'мир', 'случай', 'голова', 'ребенок', 'сила', 'конец', 'вид', 'система', 'часть', 'город', 'отношение', 'женщина', 'деньги', 'земля', 'машина', 'вода', 'отец', 'проблема', 'час', 'право', 'нога', 'решение', 'дверь', 'образ', 'история', 'власть', 'закон', 'война', 'бог', 'голос', 'тысяча', 'книга', 'возможность', 'результат', 'ночь', 'стол', 'имя', 'область', 'статья', 'число', 'компания', 'народ', 'жена', 'группа', 'развитие', 'процесс', 'суд', 'условие', 'средство', 'начало', 'свет', 'пора', 'путь', 'душа', 'уровень', 'форма', 'связь', 'минута', 'улица', 'вечер', 'качество', 'мысль', 'дорога', 'мать', 'действие', 'месяц', 'государство', 'язык', 'любовь', 'взгляд', 'мама', 'век', 'школа', 'цель', 'общество', 'деятельность', 'организация', 'президент', 'комната', 'порядок', 'момент', 'театр', 'письмо', 'утро', 'помощь', 'ситуация', 'роль', 'рубль', 'смысл', 'состояние', 'квартира', 'орган', 'внимание', 'тело', 'труд', 'сын']
+    def get_word():
+        choice = random.choice(word_list).upper()
+        return choice
 
-print('Приветствую! Напиши номер программы, которую зочешь запустить', '1) Угадайка чисел', '2) Генератор безопасных паролей', '3) Шифр Цезаря', sep = '\n')
+    def display_hangman(mistakes):
+        stages = [
+            '''
+               --------
+               |      |
+               |      
+               |    
+               |      
+               |     
+               -
+            ''',
+            '''
+               --------
+               |      |
+               |      O
+               |    
+               |      
+               |     
+               -
+            ''',
+            '''
+               --------
+               |      |
+               |      O
+               |      |
+               |      |
+               |     
+               -
+            ''',
+            '''
+               --------
+               |      |
+               |      O
+               |     \\|
+               |      |
+               |     
+               -
+            ''',
+            '''
+               --------
+               |      |
+               |      O
+               |     \\|/
+               |      |
+               |      
+               -
+            ''',
+            '''
+               --------
+               |      |
+               |      O
+               |     \\|/
+               |      |
+               |     / 
+               -
+            ''',
+            '''
+               --------
+               |      |
+               |      O
+               |     \\|/
+               |      |
+               |     / \\
+               -
+            ''']
+        return stages[mistakes]
+
+    next_game = '+'
+
+    def play():
+        word = get_word()
+        l = len(word)
+        mistakes = 0
+        inputs = []
+
+        answer = ['_' for _ in range(l)]
+        print('Привет! Давай сыграем в виселицу! Я буду загадывать слова, а ты их угадывать. Я загадал, можешь начинать')
+
+        while mistakes < 6:
+            while '_' in answer:
+                print('Напиши букву, которая по твоему может оказаться в загаданном слове')
+                letter = input().upper()
+                if letter in inputs:
+                    print('Ты уже называл эту букву')
+                    break
+                if letter in word:
+                    for i in range(l):
+                        if word[i] == letter:
+                            answer[i] = letter
+                    print('Таак, одну букву ты угадал, давай дальше')
+                else:
+                    mistakes += 1
+                    print('Ты не угадал, сделай ещё попытку')
+
+                print(display_hangman(mistakes))
+                inputs.append(letter)
+                break
+            else:
+                print(
+                    'Congratulations! You saved your ass this time - you guessed the word! Mr. Hangman will generously spare your life.')
+                global next_game
+                next_game = input('''Although, if you\'re still willing to press your luck and eventually die on the gallows, of course -
+                you're welcome to start the Game once again. Just tap '+', little shit, let's see what you've got!
+                Or press '-' and get out of here for good, man: ''')
+                break
+
+        else:
+            print('У тебя закончились попытки, ты проиграл')
+            print('Ты был близок, я загадал слово', word)
+            next_game = input('Если хочешь сыграть ещё раз поставь "+"')
+
+    while next_game == '+':
+        play()
+    else:
+        print('Было приятно сыграть, пока!')
+
+print('Приветствую! Напиши номер программы, которую зочешь запустить', '1) Угадайка чисел', '2) Генератор безопасных паролей', '3) Шифр Цезаря', '4) Виселица (пока только на русском)', sep = '\n')
 number = input()
 if number == '1':
     number_guessing()
@@ -121,3 +247,5 @@ elif number == '2':
     secure_password_generator()
 elif number == '3':
     caesar_cipher()
+elif number == '4':
+    hangman()
